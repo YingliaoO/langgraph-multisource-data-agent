@@ -43,7 +43,7 @@ def test_chat_api_exposes_legacy_alias_routes() -> None:
       - POST /api/v1/chat/chat/stream
     """
 
-    from gustobot.main import application
+    from multisource_data_agent.main import application
 
     routes = _collect_route_methods(application)
 
@@ -72,7 +72,7 @@ def test_settings_accept_openai_env_var_aliases(monkeypatch) -> None:
     monkeypatch.setenv("OPENAI_MODEL", "test-model")
 
     # Import late so env is set before instantiation.
-    from gustobot.config.settings import Settings
+    from multisource_data_agent.config.settings import Settings
 
     settings = Settings(_env_file=None)
 

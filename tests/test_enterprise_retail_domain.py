@@ -10,11 +10,11 @@ def read(relative: str) -> str:
 
 def test_current_prompts_use_enterprise_retail_semantics():
     prompt_files = [
-        "gustobot/application/agents/lg_prompts.py",
-        "gustobot/application/agents/lg_builder.py",
-        "gustobot/application/agents/kg_sub_graph/prompts/kg_prompts.py",
-        "gustobot/application/agents/kg_sub_graph/agentic_rag_agents/components/planner/prompts.py",
-        "gustobot/application/agents/kg_sub_graph/agentic_rag_agents/components/guardrails/node.py",
+        "multisource_data_agent/application/agents/lg_prompts.py",
+        "multisource_data_agent/application/agents/lg_builder.py",
+        "multisource_data_agent/application/agents/kg_sub_graph/prompts/kg_prompts.py",
+        "multisource_data_agent/application/agents/kg_sub_graph/agentic_rag_agents/components/planner/prompts.py",
+        "multisource_data_agent/application/agents/kg_sub_graph/agentic_rag_agents/components/guardrails/node.py",
     ]
     combined = "\n".join(read(path) for path in prompt_files)
     for term in ("retail_orders", "RetailProduct", "RetailSupplier", "退款", "退货政策"):
@@ -22,13 +22,13 @@ def test_current_prompts_use_enterprise_retail_semantics():
 
 
 def test_text2sql_prompts_do_not_inject_recipe_domain_summary():
-    from gustobot.application.agents.text2sql.components.query_analysis.prompts import (
+    from multisource_data_agent.application.agents.text2sql.components.query_analysis.prompts import (
         create_query_analysis_prompt,
     )
-    from gustobot.application.agents.text2sql.components.sql_generation.prompts import (
+    from multisource_data_agent.application.agents.text2sql.components.sql_generation.prompts import (
         create_sql_generation_prompt,
     )
-    from gustobot.application.agents.text2sql.components.visualization.prompts import (
+    from multisource_data_agent.application.agents.text2sql.components.visualization.prompts import (
         create_visualization_prompt,
     )
 
@@ -69,7 +69,7 @@ def test_text2sql_prompts_do_not_inject_recipe_domain_summary():
 
 def test_retail_predefined_queries_cover_core_relationships_without_removing_legacy_templates():
     source = read(
-        "gustobot/application/agents/kg_sub_graph/agentic_rag_agents/components/predefined_cypher/cypher_dict.py"
+        "multisource_data_agent/application/agents/kg_sub_graph/agentic_rag_agents/components/predefined_cypher/cypher_dict.py"
     )
     for query_name in (
         '"retail_product_supplier"',
@@ -85,11 +85,11 @@ def test_retail_predefined_queries_cover_core_relationships_without_removing_leg
 
 
 def test_graph_tool_dynamic_examples_use_retail_retriever():
-    graph_tool = read("gustobot/application/agents/tool_execution/graph_tool.py")
+    graph_tool = read("multisource_data_agent/application/agents/tool_execution/graph_tool.py")
     assert "RetailCypherExampleRetriever" in graph_tool
     assert "RecipeCypherRetriever" not in graph_tool
     retriever = read(
-        "gustobot/application/agents/kg_sub_graph/agentic_rag_agents/retrievers/cypher_examples/retail_retriever.py"
+        "multisource_data_agent/application/agents/kg_sub_graph/agentic_rag_agents/retrievers/cypher_examples/retail_retriever.py"
     )
     assert "RetailProduct" in retriever
     assert "SUPPLIED_BY" in retriever

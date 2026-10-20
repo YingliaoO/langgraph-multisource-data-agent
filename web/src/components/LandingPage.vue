@@ -4,7 +4,7 @@
       <div class="brand" @click="triggerChat">
         <span class="logo">DA</span>
         <div class="text">
-          <h1>GustoBot</h1>
+          <h1>Multi-Source Data Agent</h1>
           <p>LangGraph-based Enterprise Data Agent</p>
         </div>
       </div>

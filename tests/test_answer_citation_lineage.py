@@ -2,15 +2,15 @@
 
 import asyncio
 
-from gustobot.application.agents.execution_contract import normalize_tool_results
-from gustobot.application.agents.kg_sub_graph.agentic_rag_agents.components.summarize.answer_generator import (
+from multisource_data_agent.application.agents.execution_contract import normalize_tool_results
+from multisource_data_agent.application.agents.kg_sub_graph.agentic_rag_agents.components.summarize.answer_generator import (
     AnswerSynthesis,
     generate_answer_with_citations,
 )
-from gustobot.application.agents.kg_sub_graph.agentic_rag_agents.components.summarize.evidence_context import (
+from multisource_data_agent.application.agents.kg_sub_graph.agentic_rag_agents.components.summarize.evidence_context import (
     build_evidence_context,
 )
-from gustobot.application.agents.tool_contracts import Evidence, ToolResult
+from multisource_data_agent.application.agents.tool_contracts import Evidence, ToolResult
 
 
 class _StructuredInvoker:

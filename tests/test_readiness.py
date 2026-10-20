@@ -2,7 +2,7 @@ import json
 
 import pytest
 
-import gustobot.main as main
+import multisource_data_agent.main as main
 
 
 @pytest.mark.asyncio

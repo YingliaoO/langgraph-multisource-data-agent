@@ -1,6 +1,6 @@
-# 基于 LangGraph 的多源数据分析 Agent
+# Multi-Source Data Agent
 
-GustoBot 是一个基于 **FastAPI + LangGraph** 的 Data Agent 作品集项目。用户用自然语言提问，系统判断请求类型、拆解数据任务、选择工具，并查询 MySQL、PostgreSQL/PGVector 或 Neo4j。查询结果会附带结构化执行状态和证据，供回答、Vue 控制台和端到端评测使用。
+Multi-Source Data Agent 是一个基于 **FastAPI + LangGraph** 的 Data Agent 作品集项目。用户用自然语言提问，系统判断请求类型、拆解数据任务、选择工具，并查询 MySQL、PostgreSQL/PGVector 或 Neo4j。查询结果会附带结构化执行状态和证据，供回答、Vue 控制台和端到端评测使用。
 
 默认演示场景是 **Synthetic Enterprise Retail（合成企业零售数据）**。仓库中的零售客户、订单、商品、供应商和政策均为演示资产，不代表真实企业的生产数据。本项目适合本地技术演示；未实现生产环境所需的身份认证、权限控制和租户隔离。
 
@@ -38,10 +38,10 @@ Router 负责选择对话、澄清、数据查询或文件摄取流程；Planner
 
 | 层次 | 技术与位置 |
 | --- | --- |
-| API 与编排 | Python、FastAPI、LangGraph；`gustobot/` |
-| 结构化数据 | MySQL、SQLGlot；`gustobot/application/agents/text2sql/` |
+| API 与编排 | Python、FastAPI、LangGraph；`multisource_data_agent/` |
+| 结构化数据 | MySQL、SQLGlot；`multisource_data_agent/application/agents/text2sql/` |
 | 知识检索 | PostgreSQL/PGVector、Reranker；`kb_ingest/` |
-| 关系数据 | Neo4j、Cypher；`gustobot/application/agents/tool_execution/` |
+| 关系数据 | Neo4j、Cypher；`multisource_data_agent/application/agents/tool_execution/` |
 | 控制台 | Vue 3、TypeScript、Vite；`web/` |
 | 验证与演示 | Pytest、HTTP Eval；`tests/`、`eval/`、`demo/enterprise_retail/` |
 
@@ -73,6 +73,8 @@ curl.exe http://localhost:8000/ready
 python .\demo\enterprise_retail\bootstrap.py
 python -u .\demo\enterprise_retail\smoke.py
 ```
+
+沿用旧版 `.env` 的用户需按[部署说明](docs/DEPLOYMENT.md)迁移 `GUSTOBOT_` 前缀变量；通用的数据库和模型配置键保持原名。
 
 在 Linux/macOS 下，将激活命令改为 `source .venv/bin/activate`，复制命令改为 `cp .env.example .env`。首次初始化会向三个数据源写入**合成演示数据**；已有数据环境应先阅读 [快速启动](docs/QUICK_START.md) 和 [部署说明](docs/DEPLOYMENT.md)。API 文档可在本地查看 `http://localhost:8000/docs`。
 

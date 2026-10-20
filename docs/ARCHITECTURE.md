@@ -1,8 +1,8 @@
-# GustoBot 当前系统架构说明
+# Multi-Source Data Agent 当前系统架构说明
 
 ## 1. 架构目标
 
-GustoBot 已从早期“多个 route-specific workflow + 多套 RAG/KG/Chatbot 能力”逐步收敛为一个统一的多源 Data Agent：
+Multi-Source Data Agent 已从早期“多个 route-specific workflow + 多套 RAG/KG/Chatbot 能力”逐步收敛为一个统一的多源 Data Agent：
 
 ```text
 Request

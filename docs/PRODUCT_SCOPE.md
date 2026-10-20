@@ -1,12 +1,12 @@
-# GustoBot 产品范围说明
+# Multi-Source Data Agent 产品范围说明
 
 ## 1. 文档目的
 
-本文冻结 GustoBot 当前正式产品边界，避免历史代码、兼容接口和实验能力重新进入主架构叙事。后续 README、Demo、Eval、UI、简历和面试介绍均应以本文为准。
+本文冻结 Multi-Source Data Agent 当前正式产品边界，避免历史代码、兼容接口和实验能力重新进入主架构叙事。后续 README、Demo、Eval、UI、简历和面试介绍均应以本文为准。
 
 ## 2. 当前产品定义
 
-GustoBot 当前定义为：
+Multi-Source Data Agent 当前定义为：
 
 > **基于 LangGraph 的多源企业数据智能 Agent（Enterprise Data Agent）**
 

@@ -1,10 +1,10 @@
 """Tests for the bounded versioned execution DTO."""
 
-from gustobot.application.agents.execution_contract import (
+from multisource_data_agent.application.agents.execution_contract import (
     build_execution_dto,
     normalize_tool_results,
 )
-from gustobot.application.agents.tool_contracts import Evidence, Statement, ToolResult
+from multisource_data_agent.application.agents.tool_contracts import Evidence, Statement, ToolResult
 
 
 def test_execution_contract_assigns_stable_citations_and_bounded_preview() -> None:

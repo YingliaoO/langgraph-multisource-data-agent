@@ -1,8 +1,8 @@
-# GustoBot 评估体系说明
+# Multi-Source Data Agent 评估体系说明
 
 ## 1. Eval 是什么
 
-GustoBot 的 Eval 不是普通单元测试，而是对真实 Agent 行为进行端到端考试：
+Multi-Source Data Agent 的 Eval 不是普通单元测试，而是对真实 Agent 行为进行端到端考试：
 
 ```text
 JSONL Case

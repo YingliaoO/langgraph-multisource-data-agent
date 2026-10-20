@@ -6,9 +6,9 @@ import asyncio
 
 from langchain_core.messages import AIMessage
 
-from gustobot.application.agents.lg_states import AgentState
-from gustobot.application.agents.tool_contracts import Evidence, ToolResult
-from gustobot.interfaces.http.v1 import chat as chat_module
+from multisource_data_agent.application.agents.lg_states import AgentState
+from multisource_data_agent.application.agents.tool_contracts import Evidence, ToolResult
+from multisource_data_agent.interfaces.http.v1 import chat as chat_module
 
 
 def test_top_level_agent_state_declares_canonical_tool_results() -> None:

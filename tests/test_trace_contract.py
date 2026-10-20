@@ -1,6 +1,6 @@
 """Trace contract compatibility checks."""
 
-from gustobot.application.agents.observability import create_trace, finish_trace, trace_event
+from multisource_data_agent.application.agents.observability import create_trace, finish_trace, trace_event
 
 
 def test_trace_contract_has_version_status_attempt_and_redaction() -> None:

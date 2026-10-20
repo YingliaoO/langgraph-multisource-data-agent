@@ -1,5 +1,5 @@
 [project]
-name = "gustobot"
+name = "multisource-data-agent"
 version = "0.1.2"
 description = "LangGraph-based multi-source Enterprise Data Agent with synthetic retail demos"
 readme = "README.md"

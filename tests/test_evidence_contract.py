@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import asyncio
 
-from gustobot.application.agents.kg_sub_graph.agentic_rag_agents.components.summarize.evidence_context import (
+from multisource_data_agent.application.agents.kg_sub_graph.agentic_rag_agents.components.summarize.evidence_context import (
     build_evidence_context,
 )
-from gustobot.application.agents.tool_contracts import Evidence, ToolResult
-from gustobot.application.agents.tool_execution.knowledge_rag import KnowledgeRAGTool
+from multisource_data_agent.application.agents.tool_contracts import Evidence, ToolResult
+from multisource_data_agent.application.agents.tool_execution.knowledge_rag import KnowledgeRAGTool
 
 
 class FakePgVector:

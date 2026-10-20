@@ -2,8 +2,8 @@ import asyncio
 from pathlib import Path
 from typing import Any, Dict, List
 
-from gustobot.application.agents.tool_contracts import Evidence, Statement, ToolResult
-from gustobot.application.agents.tool_execution.graph_tool import (
+from multisource_data_agent.application.agents.tool_contracts import Evidence, Statement, ToolResult
+from multisource_data_agent.application.agents.tool_execution.graph_tool import (
     GraphTool,
     PredefinedCypherStrategy,
     create_graph_tool_node,
@@ -211,7 +211,7 @@ def test_compatibility_node_preserves_old_route_label_but_returns_graph_tool_res
 
 def test_main_workflow_uses_graph_tool_boundary_not_legacy_graph_nodes():
     source = Path(
-        "gustobot/application/agents/kg_sub_graph/agentic_rag_agents/workflows/multi_agent/multi_tool.py"
+        "multisource_data_agent/application/agents/kg_sub_graph/agentic_rag_agents/workflows/multi_agent/multi_tool.py"
     ).read_text(encoding="utf-8")
 
     assert "create_cypher_query_node" not in source
@@ -233,7 +233,7 @@ def test_main_workflow_uses_graph_tool_boundary_not_legacy_graph_nodes():
 
 
 def test_dynamic_strategy_rechecks_read_only_policy_after_correction():
-    source = Path("gustobot/application/agents/tool_execution/graph_tool.py").read_text(encoding="utf-8")
+    source = Path("multisource_data_agent/application/agents/tool_execution/graph_tool.py").read_text(encoding="utf-8")
     assert "validate_no_writes_in_cypher_query(executed_statement)" in source
     assert '"reason": "write_clause_rejected"' in source
 
@@ -247,7 +247,7 @@ def test_validate_cypher_output_normalizes_openai_compatible_string_lists():
     import importlib.util
 
     module_path = Path(
-        "gustobot/application/agents/kg_sub_graph/agentic_rag_agents/components/text2cypher/validation/models.py"
+        "multisource_data_agent/application/agents/kg_sub_graph/agentic_rag_agents/components/text2cypher/validation/models.py"
     )
     spec = importlib.util.spec_from_file_location("graph_validation_models_for_test", module_path)
     assert spec is not None and spec.loader is not None
@@ -269,7 +269,7 @@ def test_validate_cypher_output_normalizes_openai_compatible_string_lists():
 
 
 def test_dynamic_execution_treats_legacy_validation_errors_as_warnings_after_success():
-    source = Path("gustobot/application/agents/tool_execution/graph_tool.py").read_text(encoding="utf-8")
+    source = Path("multisource_data_agent/application/agents/tool_execution/graph_tool.py").read_text(encoding="utf-8")
 
     assert '"validation_warnings": validation_warnings' in source
     assert 'status = "success" if records else "empty" if cyphers else "error"' in source
@@ -280,14 +280,14 @@ def test_cypher_tools_validator_uses_canonical_normalizing_model():
     import importlib.util
 
     module_path = Path(
-        "gustobot/application/agents/kg_sub_graph/agentic_rag_agents/components/cypher_tools/utils.py"
+        "multisource_data_agent/application/agents/kg_sub_graph/agentic_rag_agents/components/cypher_tools/utils.py"
     )
     source = module_path.read_text(encoding="utf-8")
     assert "class ValidateCypherOutput" not in source
     assert "components.text2cypher.validation.models import" in source
 
     models_path = Path(
-        "gustobot/application/agents/kg_sub_graph/agentic_rag_agents/components/text2cypher/validation/models.py"
+        "multisource_data_agent/application/agents/kg_sub_graph/agentic_rag_agents/components/text2cypher/validation/models.py"
     )
     spec = importlib.util.spec_from_file_location("graph_validation_models_canonical", models_path)
     assert spec is not None and spec.loader is not None

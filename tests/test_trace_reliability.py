@@ -1,11 +1,11 @@
 """B-stage trace schema and reliability boundary tests."""
 
-from gustobot.application.agents.observability import (
+from multisource_data_agent.application.agents.observability import (
     create_trace,
     finish_trace,
     trace_event,
 )
-from gustobot.application.agents.tool_execution.interface import _error_category
+from multisource_data_agent.application.agents.tool_execution.interface import _error_category
 
 
 def test_error_categories_are_stable() -> None:

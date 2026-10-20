@@ -2,12 +2,12 @@ import asyncio
 from pathlib import Path
 from typing import Any, Dict, List
 
-from gustobot.application.agents.tool_execution.knowledge_rag import (
+from multisource_data_agent.application.agents.tool_execution.knowledge_rag import (
     KnowledgeRAGTool,
     PgVectorStrategy,
     create_knowledge_rag_node,
 )
-from gustobot.config import settings
+from multisource_data_agent.config import settings
 
 
 class FakeStrategy:
@@ -131,7 +131,7 @@ def test_canonical_node_does_not_construct_milvus_from_legacy_service_argument()
             raise AssertionError("legacy Milvus service must not be called")
 
     source = Path(
-        "gustobot/application/agents/tool_execution/knowledge_rag.py"
+        "multisource_data_agent/application/agents/tool_execution/knowledge_rag.py"
     ).read_text(encoding="utf-8")
 
     assert "self.milvus =" not in source
@@ -148,7 +148,7 @@ def test_canonical_node_does_not_construct_milvus_from_legacy_service_argument()
 
 def test_legacy_kb_workflow_no_longer_performs_main_app_pgvector_rerank():
     source = Path(
-        "gustobot/application/agents/kg_sub_graph/agentic_rag_agents/workflows/multi_agent/multi_tool.py"
+        "multisource_data_agent/application/agents/kg_sub_graph/agentic_rag_agents/workflows/multi_agent/multi_tool.py"
     ).read_text(encoding="utf-8")
 
     assert "knowledge_service.reranker.rerank" not in source

@@ -10,16 +10,16 @@ from pathlib import Path
 
 
 def test_canonical_models_import_without_initializing_legacy_kg_package() -> None:
-    from gustobot.application.agents.text2sql.models import SQLAnalysis
+    from multisource_data_agent.application.agents.text2sql.models import SQLAnalysis
 
     assert SQLAnalysis.__name__ == "SQLAnalysis"
 
 
 def test_legacy_sql_execution_reexports_canonical_implementation() -> None:
-    from gustobot.application.agents.text2sql.components.sql_execution.node import (
+    from multisource_data_agent.application.agents.text2sql.components.sql_execution.node import (
         _is_read_only_query as canonical_check,
     )
-    from gustobot.application.agents.kg_sub_graph.agentic_rag_agents.components.text2sql.sql_execution.node import (
+    from multisource_data_agent.application.agents.kg_sub_graph.agentic_rag_agents.components.text2sql.sql_execution.node import (
         _is_read_only_query as legacy_check,
     )
 
@@ -27,7 +27,7 @@ def test_legacy_sql_execution_reexports_canonical_implementation() -> None:
 
 
 def test_read_only_regression_cases_live_on_canonical_path() -> None:
-    from gustobot.application.agents.text2sql.components.sql_execution.node import (
+    from multisource_data_agent.application.agents.text2sql.components.sql_execution.node import (
         _is_read_only_query,
     )
 
@@ -68,11 +68,11 @@ def test_read_only_regression_cases_live_on_canonical_path() -> None:
 
 
 def test_sql_agent_error_contract_is_explicitly_sql(monkeypatch) -> None:
-    from gustobot.application.agents.tool_execution.sql_agent import (
+    from multisource_data_agent.application.agents.tool_execution.sql_agent import (
         SQLAgent,
         create_sql_agent_node,
     )
-    from gustobot.config import settings
+    from multisource_data_agent.config import settings
 
     monkeypatch.setattr(settings, "LLM_API_KEY", "")
 
@@ -90,8 +90,8 @@ def test_sql_agent_error_contract_is_explicitly_sql(monkeypatch) -> None:
 
 
 def test_legacy_text2cypher_adapter_points_to_canonical_sql_boundary() -> None:
-    from gustobot.application.agents.tool_execution.sql_agent import create_sql_agent_node
-    from gustobot.application.agents.kg_sub_graph.agentic_rag_agents.components.text2cypher.text2sql_tool import (
+    from multisource_data_agent.application.agents.tool_execution.sql_agent import create_sql_agent_node
+    from multisource_data_agent.application.agents.kg_sub_graph.agentic_rag_agents.components.text2cypher.text2sql_tool import (
         create_text2sql_tool_node,
     )
 
@@ -100,7 +100,7 @@ def test_legacy_text2cypher_adapter_points_to_canonical_sql_boundary() -> None:
 
 def test_canonical_text2sql_source_does_not_depend_on_legacy_implementation() -> None:
     project_root = Path(__file__).resolve().parents[1]
-    canonical_root = project_root / "gustobot" / "application" / "agents" / "text2sql"
+    canonical_root = project_root / "multisource_data_agent" / "application" / "agents" / "text2sql"
     forbidden = "kg_sub_graph.agentic_rag_agents.components.text2sql"
 
     offenders = []
@@ -112,7 +112,7 @@ def test_canonical_text2sql_source_does_not_depend_on_legacy_implementation() ->
 
 
 def test_answer_formatter_serializes_decimal_rows_without_crashing() -> None:
-    from gustobot.application.agents.text2sql.components.formatting.node import (
+    from multisource_data_agent.application.agents.text2sql.components.formatting.node import (
         create_answer_formatter_node,
     )
 
@@ -134,9 +134,9 @@ def test_answer_formatter_serializes_decimal_rows_without_crashing() -> None:
 
 
 def test_sql_agent_promotes_read_only_validation_code_to_tool_metadata(monkeypatch) -> None:
-    import gustobot.application.agents.text2sql as text2sql_package
-    import gustobot.application.agents.tool_execution.sql_agent as sql_agent_module
-    from gustobot.config import settings
+    import multisource_data_agent.application.agents.text2sql as text2sql_package
+    import multisource_data_agent.application.agents.tool_execution.sql_agent as sql_agent_module
+    from multisource_data_agent.config import settings
 
     class FakeWorkflow:
         async def ainvoke(self, _state):
@@ -177,9 +177,9 @@ def test_sql_agent_promotes_read_only_validation_code_to_tool_metadata(monkeypat
 
 
 def test_sql_agent_propagates_connection_and_uses_configured_max_rows(monkeypatch) -> None:
-    import gustobot.application.agents.text2sql as text2sql_package
-    import gustobot.application.agents.tool_execution.sql_agent as sql_agent_module
-    from gustobot.config import settings
+    import multisource_data_agent.application.agents.text2sql as text2sql_package
+    import multisource_data_agent.application.agents.tool_execution.sql_agent as sql_agent_module
+    from multisource_data_agent.config import settings
 
     captured = {}
 

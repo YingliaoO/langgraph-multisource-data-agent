@@ -22,7 +22,7 @@ resolve_item_identity = _IDENTITY_MODULE.resolve_item_identity
 stable_source_id = _IDENTITY_MODULE.stable_source_id
 stable_upload_dataset_id = _IDENTITY_MODULE.stable_upload_dataset_id
 
-from gustobot.application.agents.tool_execution.knowledge_rag import (  # noqa: E402
+from multisource_data_agent.application.agents.tool_execution.knowledge_rag import (  # noqa: E402
     KnowledgeRAGTool,
     PgVectorStrategy,
     _build_tool_result,
@@ -156,7 +156,7 @@ class _Session:
 
 def test_pgvector_payload_propagates_domain_and_dataset_filter(monkeypatch):
     monkeypatch.setattr(
-        "gustobot.application.agents.tool_execution.knowledge_rag.aiohttp.ClientSession",
+        "multisource_data_agent.application.agents.tool_execution.knowledge_rag.aiohttp.ClientSession",
         _Session,
     )
     strategy = PgVectorStrategy(search_url="http://kb-ingest.test/search")
@@ -174,7 +174,7 @@ def test_pgvector_payload_propagates_domain_and_dataset_filter(monkeypatch):
 
 def test_old_pgvector_call_without_filter_remains_compatible(monkeypatch):
     monkeypatch.setattr(
-        "gustobot.application.agents.tool_execution.knowledge_rag.aiohttp.ClientSession",
+        "multisource_data_agent.application.agents.tool_execution.knowledge_rag.aiohttp.ClientSession",
         _Session,
     )
     strategy = PgVectorStrategy(search_url="http://kb-ingest.test/search")

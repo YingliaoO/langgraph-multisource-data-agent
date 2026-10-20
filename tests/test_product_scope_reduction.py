@@ -3,8 +3,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from gustobot.application.agents.routing import CANONICAL_ROUTE_TYPES, normalize_route_type
-from gustobot.application.agents.tool_execution.interface import create_default_tool_registry
+from multisource_data_agent.application.agents.routing import CANONICAL_ROUTE_TYPES, normalize_route_type
+from multisource_data_agent.application.agents.tool_execution.interface import create_default_tool_registry
 
 
 def _read_repo_source_or_skip(path: str, *, encoding: str = "utf-8") -> str:
@@ -32,7 +32,7 @@ def test_product_router_surface_excludes_image() -> None:
     )
     assert normalize_route_type("image-query") == "general-query"
 
-    source = Path("gustobot/application/agents/lg_builder.py").read_text(encoding="utf-8-sig")
+    source = Path("multisource_data_agent/application/agents/lg_builder.py").read_text(encoding="utf-8-sig")
     registry_block = source.split("# 定义状态图", 1)[1]
     assert "builder.add_node(create_image_query)" not in registry_block
     assert "builder.add_node(create_kb_query)" not in registry_block
@@ -41,8 +41,8 @@ def test_product_router_surface_excludes_image() -> None:
 
 
 def test_public_chat_and_upload_surface_no_longer_exposes_image_mode() -> None:
-    chat_source = Path("gustobot/interfaces/http/v1/chat.py").read_text(encoding="utf-8")
-    upload_source = Path("gustobot/interfaces/http/v1/upload.py").read_text(encoding="utf-8")
+    chat_source = Path("multisource_data_agent/interfaces/http/v1/chat.py").read_text(encoding="utf-8")
+    upload_source = Path("multisource_data_agent/interfaces/http/v1/upload.py").read_text(encoding="utf-8")
 
     request_block = chat_source.split("class ChatRequest", 1)[1].split("class ChatResponse", 1)[0]
     routes_block = chat_source.split("async def get_route_info", 1)[1]
@@ -53,7 +53,7 @@ def test_public_chat_and_upload_surface_no_longer_exposes_image_mode() -> None:
 
 
 def test_legacy_knowledge_and_lightrag_routers_are_not_mounted() -> None:
-    source = Path("gustobot/main.py").read_text(encoding="utf-8")
+    source = Path("multisource_data_agent/main.py").read_text(encoding="utf-8")
     assert "knowledge_router" not in source
     assert "lightrag_router" not in source
     assert "get_lightrag_service" not in source
@@ -107,14 +107,14 @@ def test_milvus_alias_is_not_part_of_core_tool_registry() -> None:
 
 
 def test_core_imports_do_not_eagerly_import_legacy_milvus_service() -> None:
-    kb_source = Path("gustobot/application/agents/tool_execution/knowledge_rag.py").read_text(encoding="utf-8")
+    kb_source = Path("multisource_data_agent/application/agents/tool_execution/knowledge_rag.py").read_text(encoding="utf-8")
     canonical_source = kb_source.split("class KnowledgeRAGTool", 1)[1]
     multi_source = Path(
-        "gustobot/application/agents/kg_sub_graph/agentic_rag_agents/"
+        "multisource_data_agent/application/agents/kg_sub_graph/agentic_rag_agents/"
         "workflows/multi_agent/multi_tool.py"
     ).read_text(encoding="utf-8")
     assert "KnowledgeService(" not in canonical_source
-    assert "from gustobot.infrastructure.knowledge import KnowledgeService" not in multi_source
+    assert "from multisource_data_agent.infrastructure.knowledge import KnowledgeService" not in multi_source
 
 
 def test_env_example_documents_only_core_stack() -> None:

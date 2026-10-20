@@ -1,8 +1,8 @@
-# GustoBot 面试说明与高频追问
+# Multi-Source Data Agent 面试说明与高频追问
 
 ## 1. 30 秒项目介绍
 
-> GustoBot 是一个基于 LangGraph 的多源企业 Data Agent。我把 MySQL、PGVector 企业知识库和 Neo4j 图数据统一成三个 canonical tools：`sql_agent`、`knowledge_rag` 和 `graph_tool`。用户问题先经过 Semantic Router 和 Generic Planner，再由 Tool Selection 选择数据工具；工具结果统一成 ToolResult 和 Evidence，最终由共享 AnswerGenerator 生成答案，并通过 versioned Execution Contract 暴露 SQL/Cypher、证据、耗时和 fallback。项目还做了 SQL 只读安全、bounded repair、RAG domain isolation、正式 Enterprise Eval 和 HTTP contract tests。
+> Multi-Source Data Agent 是一个基于 LangGraph 的多源企业 Data Agent。我把 MySQL、PGVector 企业知识库和 Neo4j 图数据统一成三个 canonical tools：`sql_agent`、`knowledge_rag` 和 `graph_tool`。用户问题先经过 Semantic Router 和 Generic Planner，再由 Tool Selection 选择数据工具；工具结果统一成 ToolResult 和 Evidence，最终由共享 AnswerGenerator 生成答案，并通过 versioned Execution Contract 暴露 SQL/Cypher、证据、耗时和 fallback。项目还做了 SQL 只读安全、bounded repair、RAG domain isolation、正式 Enterprise Eval 和 HTTP contract tests。
 
 ## 2. 1-2 分钟项目介绍
 

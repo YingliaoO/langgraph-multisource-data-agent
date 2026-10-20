@@ -1,8 +1,8 @@
-# GustoBot Enterprise Retail 演示手册
+# Multi-Source Data Agent Enterprise Retail 演示手册
 
 ## 1. 演示目标
 
-演示 GustoBot 当前 Data Agent 主链，而不是展示历史 Chatbot/菜谱/多模态能力。
+演示 Multi-Source Data Agent 当前 Data Agent 主链，而不是展示历史 Chatbot/菜谱/多模态能力。
 
 推荐完整演示顺序：
 

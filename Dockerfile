@@ -22,7 +22,7 @@ COPY requirements.txt .
 RUN python -m pip install --upgrade pip -i https://mirrors.ustc.edu.cn/pypi/simple && \
     pip install -r requirements.txt -i https://mirrors.ustc.edu.cn/pypi/simple
 
-COPY gustobot ./gustobot
+COPY multisource_data_agent ./multisource_data_agent
 COPY scripts/backend_entrypoint.sh ./backend_entrypoint.sh
 RUN chmod +x /app/backend_entrypoint.sh && \
     sed -i 's/\r$//' /app/backend_entrypoint.sh
@@ -31,4 +31,4 @@ RUN chmod +x /app/backend_entrypoint.sh && \
 
 EXPOSE 8000
 ENTRYPOINT ["./backend_entrypoint.sh"]
-CMD ["uvicorn", "gustobot.main:application", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "multisource_data_agent.main:application", "--host", "0.0.0.0", "--port", "8000"]

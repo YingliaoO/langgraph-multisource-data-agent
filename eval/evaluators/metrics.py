@@ -1,7 +1,7 @@
 import math
 from typing import Any, Dict, Iterable, List, Optional, Sequence, Set
 
-from gustobot.application.agents.routing import normalize_route_type
+from multisource_data_agent.application.agents.routing import normalize_route_type
 
 
 FALLBACK_MARKERS = ("超出范围", "拒绝")

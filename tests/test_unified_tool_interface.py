@@ -3,8 +3,8 @@
 import asyncio
 from typing import Any, Dict, Optional
 
-from gustobot.application.agents.tool_contracts import Evidence, ToolResult
-from gustobot.application.agents.tool_execution.interface import (
+from multisource_data_agent.application.agents.tool_contracts import Evidence, ToolResult
+from multisource_data_agent.application.agents.tool_execution.interface import (
     CORE_TOOL_NAMES,
     DataTool,
     DuplicateToolAliasError,
@@ -282,9 +282,9 @@ def test_duplicate_aliases_are_rejected() -> None:
 
 
 def test_real_boundaries_expose_common_protocol_metadata() -> None:
-    from gustobot.application.agents.tool_execution.graph_tool import GraphTool
-    from gustobot.application.agents.tool_execution.knowledge_rag import KnowledgeRAGTool
-    from gustobot.application.agents.tool_execution.sql_agent import SQLAgent
+    from multisource_data_agent.application.agents.tool_execution.graph_tool import GraphTool
+    from multisource_data_agent.application.agents.tool_execution.knowledge_rag import KnowledgeRAGTool
+    from multisource_data_agent.application.agents.tool_execution.sql_agent import SQLAgent
 
     assert SQLAgent.tool_name == "sql_agent"
     assert SQLAgent.tool_kind == "sql"

@@ -12,7 +12,7 @@
       - 8.8.4.4
     environment:
       # 基础配置
-      - DEBUG=${GUSTOBOT_DEBUG:-True}
+      - DEBUG=${MULTISOURCE_AGENT_DEBUG:-True}
       # 数据库配置
       - DATABASE_URL=${DATABASE_URL}
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-local_demo_root_only}
@@ -83,7 +83,7 @@
       # Tiktoken缓存目录
       - TIKTOKEN_CACHE_DIR=/app/data/tiktoken_cache
     volumes:
-      - ./gustobot:/app/gustobot
+      - ./multisource_data_agent:/app/multisource_data_agent
       - ./data:/app/data
       - ./uploads:/app/uploads
       - ./.env:/app/.env
@@ -92,7 +92,7 @@
       - mysql
       - kb_ingest
     networks:
-      - gustobot-network
+      - multisource-agent-network
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=3).read()"]
@@ -100,7 +100,7 @@
       timeout: 5s
       retries: 3
       start_period: 20s
-    command: uvicorn gustobot.main:application --host 0.0.0.0 --port 8000 --reload
+    command: uvicorn multisource_data_agent.main:application --host 0.0.0.0 --port 8000 --reload
 
   neo4j:
     image: neo4j:5.18
@@ -120,7 +120,7 @@
       - neo4j_data:/data
       - neo4j_logs:/logs
     networks:
-      - gustobot-network
+      - multisource-agent-network
 
   mysql:
     image: mysql:8.0
@@ -135,7 +135,7 @@
       - mysql_data:/var/lib/mysql
     command: --default-authentication-plugin=mysql_native_password
     networks:
-      - gustobot-network
+      - multisource-agent-network
 
   kb_postgres:
     image: ankane/pgvector
@@ -150,7 +150,7 @@
       - kb_pgdata:/var/lib/postgresql/data
       - ./docker/pgvector/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - gustobot-network
+      - multisource-agent-network
 
   kb_ingest:
     build:
@@ -208,11 +208,11 @@
     entrypoint: ["/bin/bash", "/app/entrypoint.sh"]
     command: ["python", "-m", "uvicorn", "kb_service.main:app", "--host", "0.0.0.0", "--port", "8000"]
     networks:
-      - gustobot-network
+      - multisource-agent-network
 
 
 networks:
-  gustobot-network:
+  multisource-agent-network:
     driver: bridge
 
 volumes:

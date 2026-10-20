@@ -7,7 +7,7 @@
 
 依赖:
     - 后端服务已在本地或容器内运行，默认地址 http://localhost:8000
-    - 可通过环境变量 GUSTOBOT_BASE_URL 自定义地址
+    - 可通过环境变量 MULTISOURCE_AGENT_BASE_URL 自定义地址
 """
 
 import asyncio
@@ -18,7 +18,7 @@ from typing import Any, Dict, List
 import httpx
 
 
-BASE_URL = os.getenv("GUSTOBOT_BASE_URL", "http://localhost:8000").rstrip("/")
+BASE_URL = os.getenv("MULTISOURCE_AGENT_BASE_URL", "http://localhost:8000").rstrip("/")
 CHAT_ENDPOINT = f"{BASE_URL}/api/v1/chat/"
 
 # 定义测试用例
@@ -145,7 +145,7 @@ def summarize(results: List[Dict[str, Any]]) -> None:
 
 
 async def main() -> int:
-    print("🧪 GustoBot 路由冒烟测试")
+    print("🧪 Multi-Source Data Agent 路由冒烟测试")
     print(f"目标接口: {CHAT_ENDPOINT}\n")
 
     # NOTE: Run sequentially to avoid overloading the backend (some routes call external LLM/image APIs).

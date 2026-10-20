@@ -1,7 +1,7 @@
 """Canonical ToolResult state propagation checks."""
 
-from gustobot.application.agents.kg_sub_graph.agentic_rag_agents.components.state import OutputState, OverallState
-from gustobot.application.agents.lg_states import AgentState
+from multisource_data_agent.application.agents.kg_sub_graph.agentic_rag_agents.components.state import OutputState, OverallState
+from multisource_data_agent.application.agents.lg_states import AgentState
 
 
 def test_execution_fields_exist_at_each_state_boundary() -> None:

@@ -1,8 +1,8 @@
-# GustoBot 当前部署说明
+# Multi-Source Data Agent 当前部署说明
 
 ## 1. 部署目标
 
-当前默认部署只围绕 GustoBot Enterprise Data Agent 主线：
+当前默认部署只围绕 Multi-Source Data Agent 主线：
 
 ```text
 backend
@@ -43,6 +43,8 @@ Copy-Item .env.example .env
 - PostgreSQL/PGVector
 
 不要提交真实 `.env`。
+
+从旧版配置升级时，请将项目专属变量改名：`GUSTOBOT_DEBUG` → `MULTISOURCE_AGENT_DEBUG`，`GUSTOBOT_MEMORY_TURNS` → `MULTISOURCE_AGENT_MEMORY_TURNS`。可选的 CLI 兼容参数 `GUSTOBOT_MAX_MEMORY_TURNS` 和测试地址 `GUSTOBOT_BASE_URL` 分别改为 `MULTISOURCE_AGENT_MAX_MEMORY_TURNS`、`MULTISOURCE_AGENT_BASE_URL`。`DEBUG`、`LLM_BASE_URL` 等通用变量无需改名。已有 `data/gustobot.db` 仍沿用原路径，本轮不迁移或删除数据库文件。
 
 ## 4. 启动核心服务
 

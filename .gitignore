@@ -213,7 +213,7 @@ marimo/_lsp/
 __marimo__/
 
 # ============================================
-# GustoBot Project Specific Ignores
+# Multi-Source Data Agent Project Specific Ignores
 # ============================================
 
 # Node.js / npm (前端依赖)

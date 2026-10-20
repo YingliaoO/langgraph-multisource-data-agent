@@ -5,9 +5,9 @@ from pathlib import Path
 from langchain_core.messages import HumanMessage
 
 from eval.evaluators.metrics import evaluate_case
-from gustobot.application.agents.lg_builder import _ensure_router, route_query
-from gustobot.application.agents.lg_states import AgentState, Router
-from gustobot.application.agents.routing import (
+from multisource_data_agent.application.agents.lg_builder import _ensure_router, route_query
+from multisource_data_agent.application.agents.lg_states import AgentState, Router
+from multisource_data_agent.application.agents.routing import (
     CANONICAL_ROUTE_TYPES,
     LEGACY_ROUTE_ALIASES,
     normalize_route_type,
@@ -53,7 +53,7 @@ def test_route_query_sends_all_data_routes_to_unified_research_plan():
 
 
 def test_router_prompt_is_semantic_not_source_specific():
-    source = Path("gustobot/application/agents/lg_prompts.py").read_text(encoding="utf-8")
+    source = Path("multisource_data_agent/application/agents/lg_prompts.py").read_text(encoding="utf-8")
     prompt = source.split('ROUTER_SYSTEM_PROMPT = """', 1)[1].split('"""', 1)[0]
     assert "data-query" in prompt
     assert "sql_agent" in prompt
@@ -66,7 +66,7 @@ def test_router_prompt_is_semantic_not_source_specific():
 
 
 def test_router_no_longer_contains_keyword_fallback():
-    source = Path("gustobot/application/agents/lg_builder.py").read_text(encoding="utf-8-sig")
+    source = Path("multisource_data_agent/application/agents/lg_builder.py").read_text(encoding="utf-8-sig")
     assert "def _heuristic_router" not in source
     assert "graphrag_keywords" not in source
     assert "text2sql_keywords" not in source
@@ -74,7 +74,7 @@ def test_router_no_longer_contains_keyword_fallback():
 
 
 def test_data_query_does_not_eagerly_initialize_neo4j_in_top_level_builder():
-    source = Path("gustobot/application/agents/lg_builder.py").read_text(encoding="utf-8-sig")
+    source = Path("multisource_data_agent/application/agents/lg_builder.py").read_text(encoding="utf-8-sig")
     function = source.split("async def create_research_plan", 1)[1].split("async def check_hallucinations", 1)[0]
     assert "get_neo4j_graph(" not in function
     assert "RecipeCypherRetriever(" not in function
@@ -83,7 +83,7 @@ def test_data_query_does_not_eagerly_initialize_neo4j_in_top_level_builder():
 
 
 def test_data_query_trace_uses_canonical_stage_name():
-    source = Path("gustobot/application/agents/lg_builder.py").read_text(encoding="utf-8-sig")
+    source = Path("multisource_data_agent/application/agents/lg_builder.py").read_text(encoding="utf-8-sig")
     function = source.split("async def create_research_plan", 1)[1].split("async def check_hallucinations", 1)[0]
     assert 'trace_event(trace, "data_query", "start"' in function
     assert '"workflow": "data-query"' in function

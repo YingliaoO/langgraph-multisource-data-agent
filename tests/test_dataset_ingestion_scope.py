@@ -18,7 +18,7 @@ def _read_source_or_skip(path: str) -> str:
 
 
 def test_upload_api_only_exposes_tabular_dataset_types() -> None:
-    source = Path("gustobot/interfaces/http/v1/upload.py").read_text(encoding="utf-8")
+    source = Path("multisource_data_agent/interfaces/http/v1/upload.py").read_text(encoding="utf-8")
 
     assert "ALLOWED_FILE_TYPES = {'.csv', '.xlsx', '.xls'}" in source
     for legacy_suffix in (".txt", ".md", ".json", ".log", ".pdf", ".doc", ".docx"):
@@ -26,7 +26,7 @@ def test_upload_api_only_exposes_tabular_dataset_types() -> None:
 
 
 def test_file_query_is_dataset_ingestion_not_milvus_document_qa() -> None:
-    source = Path("gustobot/application/agents/lg_builder.py").read_text(encoding="utf-8")
+    source = Path("multisource_data_agent/application/agents/lg_builder.py").read_text(encoding="utf-8")
     body = source.split("async def create_file_query(", 1)[1].split("async def create_research_plan(", 1)[0]
 
     assert "KnowledgeService(" not in body
@@ -59,7 +59,7 @@ def test_data_processor_supports_csv_through_same_pgvector_pipeline() -> None:
 
 
 def test_router_prompt_describes_file_query_as_dataset_ingestion() -> None:
-    source = Path("gustobot/application/agents/lg_prompts.py").read_text(encoding="utf-8")
+    source = Path("multisource_data_agent/application/agents/lg_prompts.py").read_text(encoding="utf-8")
 
     assert "## `file-query` - 数据集导入" in source
     assert "CSV/XLSX/XLS" in source
@@ -67,7 +67,7 @@ def test_router_prompt_describes_file_query_as_dataset_ingestion() -> None:
 
 
 def test_route_info_no_longer_advertises_generic_document_processing() -> None:
-    source = Path("gustobot/interfaces/http/v1/chat.py").read_text(encoding="utf-8")
+    source = Path("multisource_data_agent/interfaces/http/v1/chat.py").read_text(encoding="utf-8")
     block = source.split('"file-query": {', 1)[1].split("}", 1)[0]
 
     assert '"name": "数据集导入"' in block

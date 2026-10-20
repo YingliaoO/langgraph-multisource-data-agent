@@ -1,4 +1,4 @@
-# GustoBot 当前 Text2SQL / SQLAgent 实现说明
+# Multi-Source Data Agent 当前 Text2SQL / SQLAgent 实现说明
 
 ## 1. 定位变化
 

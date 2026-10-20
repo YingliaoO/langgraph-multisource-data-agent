@@ -6,20 +6,20 @@ from pathlib import Path
 from langchain_core.messages import AIMessage
 from langchain_core.runnables import RunnableLambda
 
-from gustobot.application.agents.kg_sub_graph.agentic_rag_agents.components.planner import (
+from multisource_data_agent.application.agents.kg_sub_graph.agentic_rag_agents.components.planner import (
     PlannerOutput,
     PlannerTask,
     create_planner_node,
     normalize_planner_tasks,
 )
-from gustobot.application.agents.kg_sub_graph.agentic_rag_agents.components.tool_selection.node import (
+from multisource_data_agent.application.agents.kg_sub_graph.agentic_rag_agents.components.tool_selection.node import (
     create_tool_selection_node,
 )
-from gustobot.application.agents.kg_sub_graph.agentic_rag_agents.workflows.multi_agent.edges import (
+from multisource_data_agent.application.agents.kg_sub_graph.agentic_rag_agents.workflows.multi_agent.edges import (
     map_reduce_planner_to_tool_selection,
 )
-from gustobot.application.agents.tool_contracts import Evidence, ToolResult
-from gustobot.application.agents.tool_execution.interface import (
+from multisource_data_agent.application.agents.tool_contracts import Evidence, ToolResult
+from multisource_data_agent.application.agents.tool_execution.interface import (
     create_default_tool_executor,
     create_unified_tool_node,
 )
@@ -267,7 +267,7 @@ def test_unified_tool_result_preserves_planner_metadata():
 
 def test_planner_prompt_is_generic_data_agent_not_graph_only():
     source = Path(
-        "gustobot/application/agents/kg_sub_graph/prompts/kg_prompts.py"
+        "multisource_data_agent/application/agents/kg_sub_graph/prompts/kg_prompts.py"
     ).read_text(encoding="utf-8")
     planner_source = source.split("PLANNER_SYSTEM_PROMPT", 1)[1].split(
         "TEXT2CYPHER_GENERATION_PROMPT", 1

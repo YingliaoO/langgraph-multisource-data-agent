@@ -3,10 +3,10 @@
 import httpx
 import pytest
 
-from gustobot.application.agents.execution_contract import build_execution_dto
-from gustobot.application.agents.tool_contracts import Evidence, Statement, ToolResult
-from gustobot.interfaces.http.v1 import chat as chat_module
-from gustobot.main import application
+from multisource_data_agent.application.agents.execution_contract import build_execution_dto
+from multisource_data_agent.application.agents.tool_contracts import Evidence, Statement, ToolResult
+from multisource_data_agent.interfaces.http.v1 import chat as chat_module
+from multisource_data_agent.main import application
 
 
 def _tool_result(kind: str, status: str = "success") -> ToolResult:

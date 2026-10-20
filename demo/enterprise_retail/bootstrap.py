@@ -165,7 +165,7 @@ def seed_neo4j() -> None:
 
 
 def multipart_upload(url: str, path: Path, timeout: int = 120) -> dict:
-    boundary = "----GustoBotEnterprise" + uuid.uuid4().hex
+    boundary = "----MultiSourceDataAgentEnterprise" + uuid.uuid4().hex
     content_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
     file_bytes = path.read_bytes()
     data = b"".join(

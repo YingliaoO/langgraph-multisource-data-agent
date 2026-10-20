@@ -9,13 +9,13 @@ from __future__ import annotations
 from pathlib import Path
 import re
 
-from gustobot.application.agents.text2sql.components.sql_execution.node import (
+from multisource_data_agent.application.agents.text2sql.components.sql_execution.node import (
     _classify_execution_error,
 )
-from gustobot.application.agents.text2sql.components.sql_repair.node import (
+from multisource_data_agent.application.agents.text2sql.components.sql_repair.node import (
     _build_repair_reason,
 )
-from gustobot.application.agents.text2sql.workflow import (
+from multisource_data_agent.application.agents.text2sql.workflow import (
     _route_after_execution,
     _route_after_validation,
 )
@@ -129,10 +129,10 @@ def test_repair_reason_contains_validation_or_execution_context() -> None:
 
 def test_workflow_revalidates_repair_and_does_not_regenerate_in_loop() -> None:
     workflow_source = Path(
-        "gustobot/application/agents/text2sql/workflow.py"
+        "multisource_data_agent/application/agents/text2sql/workflow.py"
     ).read_text(encoding="utf-8")
     agent_source = Path(
-        "gustobot/application/agents/tool_execution/sql_agent.py"
+        "multisource_data_agent/application/agents/tool_execution/sql_agent.py"
     ).read_text(encoding="utf-8")
 
     assert 'builder.add_node("repair_sql", repair_sql)' in workflow_source

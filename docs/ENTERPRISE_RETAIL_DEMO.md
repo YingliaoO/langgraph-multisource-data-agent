@@ -2,7 +2,7 @@
 
 ## 1. 目的
 
-Enterprise Retail 是 GustoBot 当前默认业务演示域，用于验证同一套 Agent 编排和 canonical tool contract 能够同时工作在：
+Enterprise Retail 是 Multi-Source Data Agent 当前默认业务演示域，用于验证同一套 Agent 编排和 canonical tool contract 能够同时工作在：
 
 - MySQL 结构化业务数据
 - PGVector 企业知识文档

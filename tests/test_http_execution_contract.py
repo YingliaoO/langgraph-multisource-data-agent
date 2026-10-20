@@ -4,8 +4,8 @@ import asyncio
 
 from langchain_core.messages import AIMessage
 
-from gustobot.application.agents.tool_contracts import Evidence, ToolResult
-from gustobot.interfaces.http.v1 import chat as chat_module
+from multisource_data_agent.application.agents.tool_contracts import Evidence, ToolResult
+from multisource_data_agent.interfaces.http.v1 import chat as chat_module
 
 
 def test_http_response_contains_execution_without_full_agent_state(monkeypatch) -> None:

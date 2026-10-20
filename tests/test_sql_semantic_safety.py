@@ -10,18 +10,18 @@ from __future__ import annotations
 import asyncio
 from types import SimpleNamespace
 
-from gustobot.application.agents.text2sql.components.sql_execution.node import (
+from multisource_data_agent.application.agents.text2sql.components.sql_execution.node import (
     _apply_result_limit,
     _configure_statement_timeout,
     create_sql_execution_node,
 )
-from gustobot.application.agents.text2sql.components.schema_retrieval.node import (
+from multisource_data_agent.application.agents.text2sql.components.schema_retrieval.node import (
     create_schema_retrieval_node,
 )
-from gustobot.application.agents.text2sql.components.sql_validation.node import (
+from multisource_data_agent.application.agents.text2sql.components.sql_validation.node import (
     create_sql_validation_node,
 )
-from gustobot.application.agents.text2sql.components.sql_validation.validators import (
+from multisource_data_agent.application.agents.text2sql.components.sql_validation.validators import (
     validate_sql_semantics,
 )
 
@@ -237,8 +237,8 @@ def test_non_mysql_timeout_is_not_faked() -> None:
 
 
 def test_schema_retrieval_and_execution_share_explicit_connection_string(monkeypatch) -> None:
-    from gustobot.application.agents.text2sql.components.schema_retrieval import node as schema_module
-    from gustobot.application.agents.text2sql.components.sql_execution import node as execution_module
+    from multisource_data_agent.application.agents.text2sql.components.schema_retrieval import node as schema_module
+    from multisource_data_agent.application.agents.text2sql.components.sql_execution import node as execution_module
 
     captured = {}
     database_url = "mysql+pymysql://user:pass@db-b:3306/retail"

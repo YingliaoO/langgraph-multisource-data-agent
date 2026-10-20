@@ -1,4 +1,4 @@
-# GustoBot 当前开发指南
+# Multi-Source Data Agent 当前开发指南
 
 ## 1. 开发原则
 
@@ -55,7 +55,7 @@ npm --prefix .\web run dev
 建议按下面顺序阅读：
 
 ```text
-gustobot/interfaces/http/v1/chat.py
+multisource_data_agent/interfaces/http/v1/chat.py
 → lg_builder.py / routing.py
 → planner / tool selection
 → tool_execution/interface.py

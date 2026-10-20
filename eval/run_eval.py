@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 
 # Running ``python eval/run_eval.py`` makes ``eval/`` sys.path[0]. Add the
-# repository root explicitly so project imports such as ``gustobot`` resolve
+# repository root explicitly so project imports such as ``multisource_data_agent`` resolve
 # without requiring callers to set PYTHONPATH manually.
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
@@ -27,7 +27,7 @@ DEFAULT_DATASET = Path(__file__).parent / "datasets" / "enterprise_retail_v1.jso
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Run GustoBot end-to-end evaluation cases.")
+    parser = argparse.ArgumentParser(description="Run Multi-Source Data Agent end-to-end evaluation cases.")
     parser.add_argument("--dataset", default=str(DEFAULT_DATASET), help="Path to JSONL evaluation cases.")
     parser.add_argument("--base-url", default="http://localhost:8000", help="Backend base URL.")
     parser.add_argument("--output-dir", default=str(Path(__file__).parent / "results"))
@@ -372,7 +372,7 @@ def write_report(
         "avg_latency_ms_answer",
     )
     lines = [
-        "# GustoBot Core Evaluation Report",
+        "# Multi-Source Data Agent Core Evaluation Report",
         "",
         f"- Dataset: `{dataset_path}`",
         f"- Generated at: `{dt.datetime.now().isoformat(timespec='seconds')}`",
