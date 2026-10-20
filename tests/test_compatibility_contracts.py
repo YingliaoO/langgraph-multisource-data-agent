@@ -19,41 +19,37 @@ if str(PROJECT_ROOT) not in sys.path:
 
 def _collect_route_methods(app) -> Set[Tuple[str, str]]:
     methods: Set[Tuple[str, str]] = set()
-    for route in getattr(app, "routes", []):
-        route_path = getattr(route, "path", None)
-        route_methods = getattr(route, "methods", None)
-        if not route_path or not route_methods:
-            continue
-        for method in route_methods:
-            methods.add((route_path, method))
+    http_methods = {
+        "get", "post", "put", "patch",
+        "delete", "options", "head", "trace",
+    }
+
+    for path, path_item in app.openapi().get("paths", {}).items():
+        for method in http_methods.intersection(path_item.keys()):
+            methods.add((path, method.upper()))
+
     return methods
 
 
 def test_chat_api_exposes_legacy_alias_routes() -> None:
-    """
-    Keep backward-compatible endpoints:
-
-    - New canonical endpoints:
-      - POST /api/v1/chat/
-      - POST /api/v1/chat/stream
-
-    - Legacy endpoints referenced by older docs/scripts:
-      - POST /api/v1/chat/chat
-      - GET  /api/v1/chat/chat/stream (SSE)
-      - POST /api/v1/chat/chat/stream
-    """
-
+    from fastapi.testclient import TestClient
     from multisource_data_agent.main import application
 
-    routes = _collect_route_methods(application)
+    client = TestClient(application)
 
-    assert ("/api/v1/chat/", "POST") in routes
-    assert ("/api/v1/chat/stream", "POST") in routes
+    cases = [
+        ("POST", "/api/v1/chat/chat", {"json": {}}),
+        ("GET", "/api/v1/chat/chat/stream", {}),
+        ("POST", "/api/v1/chat/chat/stream", {"json": {}}),
+    ]
 
-    # Legacy aliases
-    assert ("/api/v1/chat/chat", "POST") in routes
-    assert ("/api/v1/chat/chat/stream", "GET") in routes
-    assert ("/api/v1/chat/chat/stream", "POST") in routes
+    for method, path, kwargs in cases:
+        response = client.request(method, path, **kwargs)
+
+        assert response.status_code == 422, (
+            f"{method} {path}: expected 422 for missing required fields, "
+            f"got {response.status_code}: {response.text}"
+        )
 
 
 def test_settings_accept_openai_env_var_aliases(monkeypatch) -> None:
