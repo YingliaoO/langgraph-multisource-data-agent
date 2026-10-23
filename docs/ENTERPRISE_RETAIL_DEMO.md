@@ -246,29 +246,15 @@ upload
 
 ## 8. Smoke 验证
 
-原仓库历史 Enterprise smoke 案例：
+Smoke 检查以下案例：
 
 ```text
-enterprise_sql_order_count       PASS
-enterprise_sql_category_units    PASS
-enterprise_graph_supplier        PASS
-enterprise_rag_refund_policy     PASS
-enterprise_sql_policy_rejection  PASS
-enterprise_file_ingestion        PASS
+enterprise_sql_order_count
+enterprise_sql_category_units
+enterprise_graph_supplier
+enterprise_rag_refund_policy
+enterprise_sql_policy_rejection
+enterprise_file_ingestion
 ```
 
-历史结果（公开快照需在 Docker 可用时重新运行）：
-
-```text
-6/6 passed
-```
-
-## 9. 对外表述
-
-推荐：
-
-> 使用合成 Enterprise Retail 数据验证同一套 Agent 编排和 canonical tool contract 可覆盖 SQL、RAG 与 Graph 多源数据问答。
-
-不要说：
-
-> 已接入真实企业生产数据并达到生产级稳定性。
+各项结果以当前环境实测为准；有日期和范围的最近结果见[验证记录](VALIDATION.md)。所有演示数据均为合成数据，不代表真实企业生产数据或生产环境稳定性保证。

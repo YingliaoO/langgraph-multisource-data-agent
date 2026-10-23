@@ -20,7 +20,8 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from evaluators import evaluate_case, summarize_results
+from eval.evaluators import evaluate_case, summarize_results
+from eval.evaluators.fact_assertions import validate_fact_assertions
 
 
 DEFAULT_DATASET = Path(__file__).parent / "datasets" / "enterprise_retail_v1.jsonl"
@@ -33,6 +34,8 @@ def main() -> int:
     parser.add_argument("--output-dir", default=str(Path(__file__).parent / "results"))
     parser.add_argument("--timeout", type=float, default=120.0)
     parser.add_argument("--user-id", default="eval_runner")
+    parser.add_argument("--model-label", help="Optional manually recorded model name; does not change runtime configuration.")
+    parser.add_argument("--provider-label", help="Optional provider name only (no URL or credential); does not change runtime configuration.")
     parser.add_argument("--case-id", action="append", help="Run only matching case id. Can be repeated.")
     parser.add_argument("--wait-ready-timeout", type=float, default=120.0, help="Seconds to wait for backend readiness before running cases.")
     parser.add_argument("--retry-count", type=int, default=0, help="Retries per case for transient transport failures. Core baseline defaults to 0 so failures remain visible.")
@@ -62,6 +65,8 @@ def main() -> int:
         timeout=args.timeout,
         retry_count=args.retry_count,
         case_count=len(cases),
+        model_label=args.model_label,
+        provider_label=args.provider_label,
     )
 
     run_dir = Path(args.output_dir) / dt.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -123,6 +128,7 @@ def load_cases(dataset_path: Path, selected_ids: Sequence[str]) -> List[Dict[str
                 continue
             if "query" not in case:
                 raise ValueError(f"Case at line {line_number} is missing query")
+            validate_fact_assertions(case.get("fact_assertions", []))
             cases.append(case)
     return cases
 
@@ -306,7 +312,8 @@ def extract_response_tool_results(response: Optional[Dict[str, Any]]) -> Optiona
 
 
 def collect_environment_metadata(
-    *, dataset_path: Path, base_url: str, timeout: float, retry_count: int, case_count: int
+    *, dataset_path: Path, base_url: str, timeout: float, retry_count: int, case_count: int,
+    model_label: Optional[str] = None, provider_label: Optional[str] = None,
 ) -> Dict[str, Any]:
     dataset_bytes = dataset_path.read_bytes()
     return {
@@ -316,6 +323,9 @@ def collect_environment_metadata(
         "dataset_path": str(dataset_path),
         "dataset_sha256": hashlib.sha256(dataset_bytes).hexdigest(),
         "case_count": case_count,
+        "model_label": model_label,
+        "provider_label": provider_label,
+        "model_labels_source": "operator supplied; runtime configuration not inspected",
         "base_url": base_url,
         "request_timeout_seconds": timeout,
         "runner_retry_count": retry_count,
@@ -352,6 +362,8 @@ def write_report(
         "tool_execution_success_rate",
         "evidence_available_accuracy",
         "expected_fact_supported_by_evidence_rate",
+        "asserted_fact_coverage",
+        "asserted_facts_ok_rate",
         "avg_total_latency_ms",
         "p95_total_latency_ms",
     )
@@ -360,6 +372,7 @@ def write_report(
         "tool_status_counts",
         "fallback_reason_counts",
         "fallback_rate",
+        "cases_with_fact_assertions",
         "partial_success_rate",
         "transport_error_rate",
         "evidence_available_rate",
@@ -420,6 +433,7 @@ def write_report(
             "## Metric Semantics",
             "",
             "- `expected_fact_supported_by_evidence` is deterministic expected-fact support in canonical Evidence content; it is not grounded faithfulness.",
+            "- Optional `asserted_fact_coverage` / `asserted_facts_ok_rate` check explicitly declared facts and row associations. They do not replace the historical literal metrics or prove general faithfulness; see per-case `fact_assertion_results`.",
             "- `fallback_reason` reports only real alternate-strategy fallback. Empty/error/transport outcomes are reported separately.",
             "- Latency is observational in Phase E. Do not set reliability timeouts from a single run; use the three-run baseline first.",
             "- `null` metrics are excluded from aggregate denominators rather than silently counted as success.",

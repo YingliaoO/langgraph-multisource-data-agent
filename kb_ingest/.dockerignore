@@ -4,6 +4,9 @@
 **/.pytest_cache/
 **/node_modules/
 data/
+private-notes/
+.codex/
+.claude/
 save/
 logs/
 *.log

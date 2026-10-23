@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any, Callable, Coroutine, Dict, List, Optional, Union
 
 try:  # pragma: no cover - prefer typing_extensions to satisfy pydantic <3.12 requirement
@@ -191,7 +192,8 @@ async def validate_cypher_query_with_llm(
                 continue
 
             # 对于每个过滤器，构建一个 Cypher 查询，检查数据库中是否存在具有指定属性值的节点。
-            mapping = graph.query(
+            mapping = await asyncio.to_thread(
+                graph.query,
                 f"MATCH (n:{filter.node_label}) WHERE toLower(n.`{filter.property_key}`) = toLower($value) RETURN 'yes' LIMIT 1",
                 {"value": filter.property_value},
             )
@@ -345,7 +347,8 @@ def create_text2cypher_generation_node(
         """
         task = state.get("task", "")
         # 获取针对当前任务的cypher示例, 选择 k 个
-        examples: str = cypher_example_retriever.get_examples(
+        examples: str = await asyncio.to_thread(
+            cypher_example_retriever.get_examples,
             **{"query": task[0] if isinstance(task, list) else task, "k": 3}
         )
         generated_cypher = await text2cypher_chain.ainvoke(
@@ -399,7 +402,8 @@ def create_text2cypher_validation_node(
         cypher_statement = state.get("statement", "")
 
         # 1. 语法校验：检查Cypher查询的语法是否正确，例如括号匹配、关键字使用等。
-        syntax_error = validate_cypher_query_syntax(
+        syntax_error = await asyncio.to_thread(
+            validate_cypher_query_syntax,
             graph=graph, cypher_statement=cypher_statement
         )
         errors.extend(syntax_error)
@@ -525,7 +529,7 @@ def create_text2cypher_execution_node(
 
         # 清理cypher语句中的换行符
         cypher_statement = statement_raw.replace("\n", " ").strip()
-        records = graph.query(cypher_statement)
+        records = await asyncio.to_thread(graph.query, cypher_statement)
         steps = state.get("steps", list())
         steps.append("execute_cypher")
 

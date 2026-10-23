@@ -2,7 +2,7 @@
 
 ## 1. 本文目的
 
-本文用于限制公开表述，避免把一个完成度较高的求职/工程 Demo 包装成不存在的生产能力。
+本文记录当前实现、评测和部署的技术边界，区分本地演示验证与生产环境要求。
 
 ## 2. 没有完整依赖感知式多跳 scheduler
 
@@ -156,29 +156,19 @@ POST upload
 
 部分旧 route alias 和兼容源码仍存在；Milvus/LightRAG 运行资产及 Recipe 数据、词典没有纳入公开快照。
 
-准确表述：
-
-> 已退出默认产品路径和主叙事。
-
-不要说：
-
-> 已从代码库彻底删除。
+兼容代码退出默认运行路径，不等于从代码库中彻底删除。部署和测试范围以当前公开快照为准。
 
 ## 16. Graph fallback 可能影响效率
 
 GraphTool 内部 predefined 与 dynamic Text2Cypher 的 fallback 可能成功但增加 latency。
 
+Graph 路径的同步 SDK I/O 在线程中执行，避免阻塞事件循环。请求取消或预算到期后不会继续启动下游查询或回退，但无法强制终止已在线程中进行的模型/数据库调用；底层调用仍受驱动自身超时限制。此改动不能被解释为历史 provider 延迟已解决。
+
 成功 + fallback 不等于 correctness failure。
 
 ## 17. 测试与运行验证边界
 
-当前快照：
-
-```text
-183 passed
-```
-
-公开快照排除了依赖未确认授权历史资产的 legacy 测试；上述结果仅覆盖随快照分发的测试。Docker、外部模型调用与端到端 smoke 需另行验证。
+公开快照排除了依赖未确认授权历史资产的 legacy 测试；回归结果仅覆盖随快照分发的测试。测试数量随代码版本变化，执行日期和范围见[验证记录](VALIDATION.md)。Docker、外部模型调用与端到端 Smoke 分别验收。
 
 ## 18. Readiness 不等于全链路事务验证
 
@@ -187,13 +177,3 @@ GraphTool 内部 predefined 与 dynamic Text2Cypher 的 fallback 可能成功但
 ## 19. 合成数据边界
 
 Enterprise Retail 是 synthetic dataset，不允许包装成真实公司生产指标、真实客户数据或真实业务验证。
-
-## 20. 公开表述建议
-
-可以说：
-
-> “完成了可解释、可评测的多源 Data Agent 工程链路，并对 SQL 安全、Evidence contract、RAG identity、timeout/fallback 做了明确工程边界。”
-
-不要说：
-
-> “已经达到生产级企业智能数据平台标准。”

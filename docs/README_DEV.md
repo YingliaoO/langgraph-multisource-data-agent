@@ -11,7 +11,7 @@
 → 保持产品边界
 ```
 
-不应为了“技术栈丰富”继续加入新的 Agent、向量库或基础设施。
+新增能力应有明确用例、验证方式，并保持工具和公共接口的职责清晰。
 
 ## 2. 推荐环境
 
@@ -19,6 +19,8 @@
 - Docker Compose
 - Node.js/npm
 - Windows PowerShell 或 Linux shell
+
+在仓库根目录运行 `python -m pip install -r requirements.txt` 安装当前包及开发、摄取测试依赖，再运行 `python -m pip check`。后端依赖只在 `pyproject.toml` 维护；不要在 requirements 中另写一套版本。Docker 使用相同元数据安装部署 extra，`kb_ingest` 保持独立服务依赖。
 
 Windows 下建议显式调用：
 
@@ -166,11 +168,7 @@ $env:DEBUG='false'
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-当前基线：
-
-```text
-183 passed
-```
+测试数量随代码版本变化。有日期和范围的最近验证结果见[验证记录](VALIDATION.md)；本地测试不调用真实外部 LLM。
 
 ### 关键测试组
 
@@ -233,9 +231,9 @@ git diff --cached --stat
 - RAG identity semantics
 - Known limitations
 
-## 17. 停止线
+## 17. 扩展边界
 
-除非有真实核心失败，不主动增加：
+当前默认运行范围不包含：
 
 - Redis
 - Kafka
@@ -246,4 +244,4 @@ git diff --cached --stat
 - 复杂 scheduler
 - EXPLAIN optimizer
 
-先把已有设计讲清楚，比继续堆功能更有求职价值。
+优先完善可复现的演示、测试和评测；新增能力应由真实需求或失败用例驱动。

@@ -2,7 +2,9 @@
 
 ## 1. 演示目标
 
-演示 Multi-Source Data Agent 当前 Data Agent 主链，而不是展示历史 Chatbot/菜谱/多模态能力。
+使用合成零售数据验证 Multi-Source Data Agent 的 SQL、RAG、Graph 和数据摄取主链。
+
+真实前端提问截图与操作录屏见[界面说明](SHOWCASE.md)，有日期和范围的执行结果见[验证记录](VALIDATION.md)。下文列出验收预期，实际状态需在当前环境运行确认。
 
 推荐完整演示顺序：
 
@@ -223,18 +225,7 @@ $env:DEBUG='false'
 .\.venv\Scripts\python.exe -u .\demo\enterprise_retail\smoke.py
 ```
 
-当前验证结果：
-
-```text
-enterprise_sql_order_count       PASS
-enterprise_sql_category_units    PASS
-enterprise_graph_supplier        PASS
-enterprise_rag_refund_policy     PASS
-enterprise_sql_policy_rejection  PASS
-enterprise_file_ingestion        PASS
-
-Enterprise smoke: 6/6 passed
-```
+Smoke 覆盖订单总数、品类销量、商品供应商、退货政策、SQL 写操作拒绝和文件摄取提交六项检查。应逐项查看 route、tool、execution status 和事实是否满足预期；部分定向请求通过不等于六项全部通过。
 
 ## 10. 三条 Enterprise RAG 定向验证
 
@@ -246,7 +237,7 @@ enterprise_rag_supplier_sla
 enterprise_rag_refund_sop
 ```
 
-当前三条均可走：
+三条用例的预期链路如下，当前环境需重新执行确认：
 
 ```text
 route=data-query
@@ -282,9 +273,9 @@ npm --prefix .\web run build
 - timings
 - fallback reason
 
-## 12. 不推荐的演示方式
+## 12. 默认运行范围之外的能力
 
-不要把主要时间花在：
+默认产品不包含：
 
 - 老 Recipe Chatbot
 - Milvus
@@ -293,24 +284,18 @@ npm --prefix .\web run build
 - crawler
 - Redis
 
-这些不属于当前求职展示主线。
+范围说明见[产品边界](PRODUCT_SCOPE.md)。
 
-## 13. 演示异常时怎么讲
+## 13. 异常诊断
 
 ### Router timeout 但 fallback 后成功
 
-准确说：
-
-> Router structured output 有 provider long-tail，系统在 timeout 后使用 fallback，最终 route/tool/evidence 正确；该现象会计入 fallback 与 latency，而不是隐藏。
+检查 Router 的 start/decision 事件、error_code 和 fallback_reason。超时后可能进入默认数据路径；最终 route、tool、Evidence 是否正确需独立验证，fallback 及等待时间计入评测。
 
 ### Tool timeout
 
-准确说：
-
-> Tool 有独立 100 秒预算，超时会返回结构化 error，并记录 observed duration；不会无限等待或通过无限 retry 掩盖问题。
+检查 tool_execution 的终止事件与 execution.tool_results。工具默认有独立 100 秒预算；超时返回结构化 error，并记录 observed duration。应进一步定位等待发生在 schema、模型生成、数据库执行还是检索服务，不能仅凭 HTTP 200 判断成功。
 
 ### RAG 中文/英文 literal mismatch
 
-准确说：
-
-> Answer 和 Evidence 语义正确，但首版 Eval 使用字面 expected fact matching，所以保留为 evaluator limitation。
+将 expected facts、answer 与 Evidence content 逐项对照。首版 Eval 使用字面匹配，中英表述差异可能造成未匹配；应保留原始分数并人工归因，不改写 golden 以适配某次回答。

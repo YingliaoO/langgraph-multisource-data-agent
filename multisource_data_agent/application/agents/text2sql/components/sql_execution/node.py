@@ -197,7 +197,7 @@ def _map_db_type_to_driver(db_type: str) -> str:
 
 def _get_connection_string(connection_id: Optional[int]) -> Optional[str]:
     """Return the configured business database used by the SQL Agent."""
-    logger.debug("使用默认 MySQL 数据库 URL: {}", settings.DATABASE_URL)
+    logger.debug("使用已配置的业务数据库连接")
     return settings.DATABASE_URL
 
 

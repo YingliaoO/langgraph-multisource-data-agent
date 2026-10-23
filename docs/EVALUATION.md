@@ -334,25 +334,13 @@ RAG source=pgvector
 policy rejection 无 Evidence
 ```
 
-## 11. 当前测试快照
+## 11. 自动化回归测试
 
-当前项目 `.venv` 全量测试：
-
-```text
-183 passed
-```
-
-公开快照未纳入原项目的 legacy LightRAG、Recipe 和旧 Router 测试，故本次没有 skipped。它不等于覆盖所有历史模块，也不代替真实服务端到端验证。
+确定性测试通过 mock LLM/DB 验证契约和编排，不代替真实服务端到端验证。公开快照未纳入原项目的 legacy LightRAG、Recipe 和旧 Router 测试；测试数量、跳过项和执行范围应结合具体版本记录，见[验证记录](VALIDATION.md)。
 
 ## 12. Release Smoke
 
-原仓库 Enterprise smoke 历史结果；公开快照尚需在 Docker 可用时重新验证：
-
-```text
-6/6 passed
-```
-
-覆盖：
+Smoke 通过当前部署执行以下六项检查，结果以真实逐项输出为准：
 
 - SQL count
 - SQL category aggregation
@@ -360,6 +348,8 @@ policy rejection 无 Evidence
 - RAG return policy
 - SQL policy rejection
 - file ingestion acknowledgement
+
+部分定向请求通过不等于六项 Smoke 全部通过；最近验证范围和未通过项见[验证记录](VALIDATION.md)。
 
 ## 13. Eval 的正确使用方式
 
@@ -379,7 +369,7 @@ policy rejection 无 Evidence
 看到失败
 → 修改 expected facts
 → 放大 timeout
-→ 重跑到出现漂亮数字
+→ 仅报告成功运行
 ```
 
 ## 14. 当前不声称
@@ -389,3 +379,26 @@ policy rejection 无 Evidence
 - 不把一次环境 latency 当 SLO。
 - 不把 provider long-tail 简化成数据库性能问题。
 - 不把 tool selected 当 tool executed。
+
+## 15. 自然提问补充集与独立事实断言
+
+`eval/datasets/enterprise_retail_natural_v1.jsonl` 包含 6 条补充用例，去掉问题中的 MySQL、Neo4j、知识库等工具提示，覆盖订单数、品类销量、供货商、退货政策、退款 SOP，以及独立 SQL＋RAG 子任务的联合回答。它与原 12-case v1 分开运行，不能把两组分数直接混作同一基线。
+
+```powershell
+python eval/run_eval.py --dataset eval/datasets/enterprise_retail_natural_v1.jsonl --base-url http://localhost:8000 --output-dir eval/results/enterprise_retail_natural_v1 --timeout 600 --retry-count 0 --model-label YOUR_MODEL --provider-label YOUR_PROVIDER
+```
+
+`--model-label` 和 `--provider-label` 只记录操作人声明的模型及提供方名称，不读取或修改运行时配置；不要填入密钥、带凭据的 URL 或请求内容。Runner 已记录 commit、工作区 dirty 状态和 dataset SHA-256；可复现报告应在固定提交、固定数据下生成，并保留真实失败与延迟。
+
+补充用例可声明可选 `fact_assertions`，新增 `asserted_fact_coverage` 与 `asserted_facts_ok_rate`。无断言的 case 对这两个指标为 null，不进入分母。逐项结果在 `fact_assertion_results`，断言格式错误会在发送请求前报错。
+
+| 断言类型 | 检查内容 |
+| --- | --- |
+| `answer_fact` | 回答是否包含显式列出的任一等价表述，使用数字边界避免 5 命中 15 |
+| `evidence_fact` | 指定 canonical source 的 Evidence content 是否包含声明的事实 |
+| `evidence_row` | 同一 Evidence 行的字段和值是否成对匹配，字段别名须显式列出 |
+| `evidence_scalar` | 指定来源的单列聚合 Evidence 是否等于声明数值，不依赖模型生成的 SQL 列别名 |
+
+例如 Electronics=7、Home=6 必须分别在对应行成立，不能把两个数量交换后仍判为通过；“1 business day”与“1 个工作日”只有在用例明确列出别名时才按等价表述处理。未声明的列别名或措辞可能被判为未匹配，应查看实际结果人工归因，不能为适配某次回答随意扩充 golden。
+
+这些是有限、确定性的声明事实检查，不能证明完整语义、否定关系或 grounded faithfulness。原 `fact_coverage` 等 literal 指标、原 12-case 数据及历史分数保持原样。补充集当前未提供真实 HTTP 实测分数；自动测试通过不等于真实模型评测通过。

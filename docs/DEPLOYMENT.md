@@ -44,7 +44,23 @@ Copy-Item .env.example .env
 
 不要提交真实 `.env`。
 
-从旧版配置升级时，请将项目专属变量改名：`GUSTOBOT_DEBUG` → `MULTISOURCE_AGENT_DEBUG`，`GUSTOBOT_MEMORY_TURNS` → `MULTISOURCE_AGENT_MEMORY_TURNS`。可选的 CLI 兼容参数 `GUSTOBOT_MAX_MEMORY_TURNS` 和测试地址 `GUSTOBOT_BASE_URL` 分别改为 `MULTISOURCE_AGENT_MAX_MEMORY_TURNS`、`MULTISOURCE_AGENT_BASE_URL`。`DEBUG`、`LLM_BASE_URL` 等通用变量无需改名。已有 `data/gustobot.db` 仍沿用原路径，本轮不迁移或删除数据库文件。
+从旧版配置升级时，请将项目专属变量改名：`GUSTOBOT_DEBUG` → `MULTISOURCE_AGENT_DEBUG`，`GUSTOBOT_MEMORY_TURNS` → `MULTISOURCE_AGENT_MEMORY_TURNS`。可选的 CLI 兼容参数 `GUSTOBOT_MAX_MEMORY_TURNS` 和测试地址 `GUSTOBOT_BASE_URL` 分别改为 `MULTISOURCE_AGENT_MAX_MEMORY_TURNS`、`MULTISOURCE_AGENT_BASE_URL`。`DEBUG`、`LLM_BASE_URL` 等通用变量无需改名。默认 SQLite 文件名保留 `data/gustobot.db` 以兼容已有数据，不执行隐式数据库迁移。
+
+### 修改 `.env` 后让配置生效
+
+Compose 的 `environment` 在创建容器时注入。修改主机 `.env` 或执行 `docker compose restart backend`，不会更新已有容器的这部分环境变量；应用读取挂载的 `.env` 时，容器中旧环境变量还可能优先于新文件。
+
+确认 `DATABASE_URL` 指向正确的 MySQL 服务、数据库和有效账号后，重建后端容器：
+
+```powershell
+docker compose config --quiet
+docker compose up -d --no-deps --force-recreate backend
+curl.exe -s http://localhost:8000/ready
+```
+
+若修改的是 `KB_EMBEDDING_*`、`KB_LLM_*` 等知识服务配置，还需运行 `docker compose up -d --no-deps --force-recreate kb_ingest`，再检查 `http://localhost:8100/health` 及真实检索。只重建 backend 不会更新 kb_ingest 容器中的旧环境变量。
+
+若同时修改了依赖或 Dockerfile，先运行 `docker compose build backend`。上述操作保留 MySQL、Neo4j 和 PGVector 的现有数据卷，不需要执行 `down -v`、重新导入数据或重置数据库密码。不要把包含凭据的完整 `docker compose config` 输出贴到公开日志中。
 
 ## 4. 启动核心服务
 
@@ -90,6 +106,8 @@ neo4j
 knowledge_service
 llm_config
 ```
+
+`llm_config=ok` 表示已配置模型密钥，不会向外部模型服务发起付费认证请求。因此 `/ready` 为 200 时，真实聊天仍可能收到提供方的 401 `invalid_api_key` 或 404 `model_not_found`。前者需要在本机检查密钥与服务地址是否匹配；后者需要确认 `LLM_MODEL` 是该服务及账号实际可用的模型。更新 `.env` 后重建后端容器，再用真实聊天请求验证，切勿将密钥贴入日志或聊天。
 
 ### kb_ingest
 
@@ -155,11 +173,7 @@ $env:DEBUG='false'
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-当前快照：
-
-```text
-183 passed
-```
+测试数量随代码版本变化，最近的执行日期、范围和结果见[验证记录](VALIDATION.md)。
 
 如果误用系统 Python 出现 NumPy/Pandas ABI 或缺包问题，先确认解释器：
 
@@ -173,11 +187,7 @@ $env:DEBUG='false'
 .\.venv\Scripts\python.exe -u .\demo\enterprise_retail\smoke.py
 ```
 
-当前预期：
-
-```text
-6/6 passed
-```
+Smoke 覆盖六项检查。应以当前环境的逐项输出判定通过情况；HTTP 200、文件提交确认或单元测试通过都不能代替完整 Smoke 验收。最近的部分真实请求结果见[验证记录](VALIDATION.md)。
 
 ## 11. 正式 Enterprise Eval
 
@@ -192,7 +202,7 @@ $env:DEBUG='false'
   --retry-count 0
 ```
 
-不要因为 provider latency 临时修改 runtime timeout/retry 再跑“漂亮分数”。
+评测报告应记录实际模型、timeout/retry 配置及失败结果。配置不同的运行应单独报告，避免混合比较。
 
 ## 12. 日志排查
 
@@ -279,4 +289,4 @@ AnswerGenerator
 - secret manager
 - monitoring/alerting
 
-这些属于未来生产化，而不是当前求职 Demo 必须堆叠的能力。
+这些能力需要独立的实现与验证，当前本地演示不具备上述生产保证。

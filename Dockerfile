@@ -18,11 +18,12 @@ RUN set -eux; \
     apt-get install -y --no-install-recommends build-essential; \
     rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
-RUN python -m pip install --upgrade pip -i https://mirrors.ustc.edu.cn/pypi/simple && \
-    pip install -r requirements.txt -i https://mirrors.ustc.edu.cn/pypi/simple
-
+COPY pyproject.toml README.md LICENSE ./
 COPY multisource_data_agent ./multisource_data_agent
+RUN python -m pip install --upgrade pip -i https://mirrors.ustc.edu.cn/pypi/simple && \
+    pip install ".[deploy]" -i https://mirrors.ustc.edu.cn/pypi/simple && \
+    pip check
+
 COPY scripts/backend_entrypoint.sh ./backend_entrypoint.sh
 RUN chmod +x /app/backend_entrypoint.sh && \
     sed -i 's/\r$//' /app/backend_entrypoint.sh

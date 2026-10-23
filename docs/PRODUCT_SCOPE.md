@@ -2,7 +2,7 @@
 
 ## 1. 文档目的
 
-本文冻结 Multi-Source Data Agent 当前正式产品边界，避免历史代码、兼容接口和实验能力重新进入主架构叙事。后续 README、Demo、Eval、UI、简历和面试介绍均应以本文为准。
+本文说明 Multi-Source Data Agent 当前支持的产品范围，以及历史兼容接口与默认运行路径的区别。README、Demo、Eval、UI 与 API 的说明应与实际实现一致。
 
 ## 2. 当前产品定义
 
@@ -101,7 +101,7 @@ kb_postgres
 kb_ingest
 ```
 
-### 当前不作为默认主路径宣传
+### 不在默认运行路径中的能力
 
 - Milvus
 - Redis runtime dependency
@@ -116,7 +116,7 @@ kb_ingest
 - semantic DSL / semantic layer
 - query memory
 
-这些能力可能仍在仓库中保留 legacy 代码、历史测试或参考实现，但不能出现在默认架构首屏。
+部分能力可能保留兼容类型或参考代码，不代表默认 Compose 会启动对应服务。
 
 ## 6. 正式数据契约
 
@@ -188,9 +188,9 @@ domain = recipe
 
 这样可以避免同一个 PGVector corpus 中跨业务域误召回。
 
-## 8. 当前能力停止线
+## 8. 扩展约束
 
-除非出现阻塞 Enterprise Demo、正式 Eval 或核心发布的真实 bug，否则不再继续扩展以下模块：
+涉及以下边界的变更需要相应契约测试与端到端验证：
 
 - Router 核心分类体系
 - Planner 主要职责边界
@@ -200,19 +200,18 @@ domain = recipe
 - Graph predefined/dynamic 策略
 - 默认五服务 Docker topology
 
-后续工作重点应转向：
+验证应覆盖：
 
 ```text
-文档
-→ 演示
-→ 面试表达
-→ 评估结果解释
-→ 针对真实 failure class 做最小修复
+接口与文档一致
+→ 自动化回归
+→ 固定数据集评测
+→ 失败归因
 ```
 
-## 9. 不应过度声称
+## 9. 未实现的能力
 
-不能把当前项目描述为：
+当前实现不包含：
 
 - 生产级高可用平台
 - 完整 RBAC / SSO / 多租户数据平台

@@ -48,7 +48,7 @@
             <p>输入一个数据问题，查看 Agent 的回答与只读执行 Trace。</p>
             <ul>
               <li>当前演示域为 synthetic Enterprise Retail，可尝试订单统计、政策检索与商品关系问题。</li>
-              <li>也可以上传文件并沿用现有文件分析入口。</li>
+              <li>也可以上传 CSV/Excel 数据集并提交摄取任务。</li>
             </ul>
           </div>
 

@@ -28,3 +28,12 @@ data/recipe.json
 data/tiktoken_cache/
 data/lightrag/
 data/
+/private-notes/
+/docs/private/
+/docs/INTERVIEW_GUIDE.md
+/.codex/
+/.claude/
+/probe_*.py
+/_tmp*.py
+/fix_*.py
+/bootstrap_*fixed*.ps1

@@ -99,3 +99,4 @@ disallow_untyped_defs = false
 
 [tool.setuptools.packages.find]
 where = ["."]
+include = ["multisource_data_agent", "multisource_data_agent.*"]

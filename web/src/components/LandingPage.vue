@@ -30,7 +30,7 @@
           </p>
           <div class="hero-actions">
             <button class="primary" type="button" @click="triggerChat">Launch Data Console</button>
-            <button class="secondary" type="button" @click="triggerChat">Upload a Document</button>
+            <button class="secondary" type="button" @click="triggerChat">Upload a Dataset</button>
           </div>
           <ul class="hero-meta">
             <li>
@@ -140,7 +140,7 @@
 
       <section id="datasets" class="datasets">
         <h3>Current demo data domain</h3>
-        <p>The default demonstration domain is a synthetic Enterprise Retail dataset; Recipe assets remain available only for historical regression.</p>
+        <p>This public snapshot ships synthetic Enterprise Retail data for local demonstrations. Historical Recipe datasets are not distributed.</p>
         <ul>
           <li><strong>Structured data:</strong> retail customers, products, orders, order items, and refunds for Text2SQL.</li>
           <li><strong>Knowledge base:</strong> return policies, refund SOPs, campaign rules, and supplier SLAs through PGVector.</li>

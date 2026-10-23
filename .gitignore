@@ -372,3 +372,14 @@ data/
 kb_ingest/data/
 .coverage
 htmlcov/
+
+# Local notes, assistant sessions and one-off diagnostics
+/private-notes/
+/docs/private/
+/docs/INTERVIEW_GUIDE.md
+/.codex/
+/.claude/
+/probe_*.py
+/_tmp*.py
+/fix_*.py
+/bootstrap_*fixed*.ps1

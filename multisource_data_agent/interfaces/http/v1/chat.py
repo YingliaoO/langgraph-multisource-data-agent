@@ -277,7 +277,7 @@ async def process_agent_query(message: str, session_id: str,
             ).model_dump(mode="json"),
         }
     except Exception as e:
-        logger.error(f"Agent query failed: {e}", exc_info=True)
+        logger.error("Agent query failed: {}", e, exc_info=True)
         trace_event(eval_trace, "agent_graph", "error", success=False, error=e, fallback=True)
         finish_trace(eval_trace, route="error", error=str(e))
         return {

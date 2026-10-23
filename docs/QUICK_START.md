@@ -165,11 +165,7 @@ $env:DEBUG='false'
 .\.venv\Scripts\python.exe -m pytest -q
 ```
 
-当前快照：
-
-```text
-183 passed
-```
+测试数量随版本变化，最近的执行范围和结果见[验证记录](VALIDATION.md)。
 
 ## 13. 正式 Eval
 

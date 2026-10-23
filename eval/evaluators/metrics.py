@@ -3,6 +3,8 @@ from typing import Any, Dict, Iterable, List, Optional, Sequence, Set
 
 from multisource_data_agent.application.agents.routing import normalize_route_type
 
+from .fact_assertions import evaluate_fact_assertions
+
 
 FALLBACK_MARKERS = ("超出范围", "拒绝")
 TEXT2SQL_TOOLS = {"sql_agent", "text2sql_query"}
@@ -46,6 +48,7 @@ def evaluate_case(
     trace = _trace(response)
     events = _events(response)
     fact_coverage = _fact_coverage(answer, expected_facts)
+    assertions = evaluate_fact_assertions(case.get("fact_assertions", []), response)
     # Evidence support is a Data Agent grounding metric. File/general routes can
     # have deterministic expected answer facts without participating in the
     # canonical SQL/RAG/Graph Evidence contract, so exclude them from this
@@ -114,6 +117,10 @@ def evaluate_case(
         "tool_accuracy": selection_accuracy,  # legacy compatibility alias
         "retrieval_recall_at_k": retrieval_recall_at_k,
         "fact_coverage": fact_coverage,
+        "asserted_fact_coverage": (
+            sum(item["passed"] for item in assertions) / len(assertions) if assertions else None
+        ),
+        "asserted_facts_ok": all(item["passed"] for item in assertions) if assertions else None,
         "answer_faithfulness": fact_coverage,  # legacy report compatibility alias
         "matched_answer_facts": [fact for fact in expected_facts if _contains(answer, fact)],
         "fallback": fallback_reason != "none",
@@ -155,6 +162,7 @@ def evaluate_case(
             "tools": expected_tools,
             "sources": expected_sources,
             "answer_facts": expected_facts,
+            "fact_assertions": case.get("fact_assertions", []),
             "fallback": expected_fallback,
             "sql_success": case.get("expected_sql_success"),
             "cypher_executable": case.get("expected_cypher_executable"),
@@ -177,6 +185,7 @@ def evaluate_case(
             "error_categories": _error_categories(response),
             "statements": _statements(response),
             "answer": answer,
+            "fact_assertion_results": assertions,
             "trace_id": trace.get("trace_id"),
             "trace_event_count": len(events),
             "trace_stages": sorted({_string(event.get("stage")) for event in events if event.get("stage")}),
@@ -210,6 +219,11 @@ def summarize_results(results: Sequence[Dict[str, Any]]) -> Dict[str, Any]:
         "evidence_source_coverage": _mean_metric(results, "evidence_source_coverage"),
         "retrieval_recall_at_k": _mean_metric(results, "retrieval_recall_at_k"),
         "fact_coverage": _mean_metric(results, "fact_coverage"),
+        "asserted_fact_coverage": _mean_metric(results, "asserted_fact_coverage"),
+        "asserted_facts_ok_rate": _mean_metric(results, "asserted_facts_ok"),
+        "cases_with_fact_assertions": sum(
+            item.get("metrics", {}).get("asserted_facts_ok") is not None for item in results
+        ),
         "fact_coverage_ok_rate": _mean_metric(results, "fact_coverage_ok"),
         "fallback_rate": _mean_metric(results, "fallback"),
         "fallback_reason_counts": _reason_counts(results),

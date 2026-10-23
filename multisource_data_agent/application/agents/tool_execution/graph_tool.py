@@ -9,8 +9,10 @@ produce the shared ``ToolResult`` contract.
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import dataclass
 import re
+from threading import Lock
 import time
 from typing import Any, Awaitable, Callable, Dict, List, Literal, Optional, Protocol
 
@@ -79,6 +81,7 @@ class PredefinedCypherStrategy:
         llm: Any = None,
     ) -> None:
         self._graph = graph
+        self._initialization_lock = Lock()
         self._graph_factory = graph_factory or self._default_graph_factory
         self._predefined_cypher_dict = predefined_cypher_dict
         self._matcher = matcher
@@ -92,7 +95,9 @@ class PredefinedCypherStrategy:
 
     def _get_graph(self) -> Any:
         if self._graph is None:
-            self._graph = self._graph_factory()
+            with self._initialization_lock:
+                if self._graph is None:
+                    self._graph = self._graph_factory()
         return self._graph
 
     def _templates(self) -> Dict[str, str]:
@@ -105,7 +110,11 @@ class PredefinedCypherStrategy:
         return self._predefined_cypher_dict
 
     def _get_matcher(self) -> Any:
-        if self._matcher is None:
+        if self._matcher is not None:
+            return self._matcher
+        with self._initialization_lock:
+            if self._matcher is not None:
+                return self._matcher
             from multisource_data_agent.application.agents.kg_sub_graph.agentic_rag_agents.components.predefined_cypher.descriptions import (
                 QUERY_DESCRIPTIONS,
             )
@@ -117,7 +126,11 @@ class PredefinedCypherStrategy:
         return self._matcher
 
     def _get_llm(self) -> Any:
-        if self._llm is None:
+        if self._llm is not None:
+            return self._llm
+        with self._initialization_lock:
+            if self._llm is not None:
+                return self._llm
             from langchain_openai import ChatOpenAI
 
             kwargs: Dict[str, Any] = {
@@ -140,7 +153,7 @@ class PredefinedCypherStrategy:
         context: Dict[str, Any],
     ) -> ToolResult:
         templates = self._templates()
-        matcher = self._get_matcher()
+        matcher = await asyncio.to_thread(self._get_matcher)
 
         nested = context.get("query_parameters")
         incoming: Dict[str, Any] = dict(nested) if isinstance(nested, dict) else dict(context)
@@ -151,7 +164,7 @@ class PredefinedCypherStrategy:
 
         match_score: Optional[float] = None
         if not query_name:
-            matches = matcher.match_query(task, top_k=1)
+            matches = await asyncio.to_thread(matcher.match_query, task, top_k=1)
             if matches:
                 query_name = str(matches[0].get("query_name") or "")
                 try:
@@ -191,7 +204,10 @@ class PredefinedCypherStrategy:
         parameters = incoming.get("parameters")
         parameters = dict(parameters) if isinstance(parameters, dict) else {}
         if required_params and not parameters:
-            parameters = matcher.extract_parameters(task, query_name, llm=self._get_llm()) or {}
+            llm = await asyncio.to_thread(self._get_llm)
+            parameters = await asyncio.to_thread(
+                matcher.extract_parameters, task, query_name, llm=llm
+            ) or {}
         parameters = {str(key): value for key, value in parameters.items()}
 
         missing = [name for name in sorted(required_params) if not parameters.get(name)]
@@ -212,7 +228,13 @@ class PredefinedCypherStrategy:
             )
 
         try:
-            records = self._get_graph().query(query=statement, params=parameters) or []
+            # Keep separate await boundaries: cancellation during initialization
+            # or parameter extraction must not start a subsequent database query.
+            # Cancelling an await cannot stop synchronous I/O already in a worker.
+            graph = await asyncio.to_thread(self._get_graph)
+            records = await asyncio.to_thread(
+                graph.query, query=statement, params=parameters
+            ) or []
         except Exception as exc:
             logger.exception("Predefined Cypher query failed: {}", exc)
             error = _error_text(exc)
@@ -281,6 +303,7 @@ class Text2CypherStrategy:
         llm_cypher_validation: bool = True,
     ) -> None:
         self._graph = graph
+        self._initialization_lock = Lock()
         self._graph_factory = graph_factory or self._default_graph_factory
         self._llm = llm
         self._cypher_example_retriever = cypher_example_retriever
@@ -294,11 +317,17 @@ class Text2CypherStrategy:
 
     def _get_graph(self) -> Any:
         if self._graph is None:
-            self._graph = self._graph_factory()
+            with self._initialization_lock:
+                if self._graph is None:
+                    self._graph = self._graph_factory()
         return self._graph
 
     def _get_llm(self) -> Any:
-        if self._llm is None:
+        if self._llm is not None:
+            return self._llm
+        with self._initialization_lock:
+            if self._llm is not None:
+                return self._llm
             from langchain_openai import ChatOpenAI
 
             kwargs: Dict[str, Any] = {
@@ -349,8 +378,8 @@ class Text2CypherStrategy:
             validate_no_writes_in_cypher_query,
         )
 
-        graph = self._get_graph()
-        llm = self._get_llm()
+        graph = await asyncio.to_thread(self._get_graph)
+        llm = await asyncio.to_thread(self._get_llm)
         state: Dict[str, Any] = {
             "task": task,
             "steps": list(context.get("steps") or []),

@@ -101,7 +101,7 @@ def test_default_docs_and_console_examples_are_enterprise_retail():
         "docs/DEMO_RUNBOOK.md",
         "docs/API_CONTRACT.md",
         "docs/PRODUCT_SCOPE.md",
-        "docs/INTERVIEW_GUIDE.md",
+        "docs/ENTERPRISE_RETAIL_DEMO.md",
         "web/src/components/LandingPage.vue",
         "web/src/components/ChatWidget.vue",
     ]
